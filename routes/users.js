@@ -1,9 +1,158 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
+const User = require("../models/User.models");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv/config");
+const saltRounds = 10;
+const isLoggedIn = require("../middleware/isLoggedIn")
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get("/", function (req, res, next) {
+  res.send("respond with a resource");
 });
+
+router.post("/signup", function (req, res, next) {
+  //1. Make sure fields are filled out
+  if (!req.body.username || !req.body.password || !req.body.email || !req.body.firstName || !req.body.lastName)  {
+    return res.json({ message: "Please fill out all fields" });
+  }
+
+  //2. Make sure username isn't taken
+    User.findOne({username: req.body.username})
+      .then((foundUser) => {
+        if (foundUser) {
+          return res.json({message: "Username is taken"})
+        } else {
+          //3 Hash the password
+          //3.1 Generate the salt
+          const salt = bcrypt.genSaltSync(saltRounds)
+          //3.2 Hash the password
+          const hashedPassword = bcrypt.hashSync(req.body.password, salt)
+          //4 Create the account
+          User.create({
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            dateOfBirth: req.body.dateOfBirth,
+            city: req.body.city,
+            state: req.body.state,
+          })
+          .then((createdUser) => {
+            //5. Create the JSON Web Token (JWT)
+            //5.1 Create the payload
+            const payload = {_id: createdUser._id}
+
+            //5.2 Create the token
+            const token = jwt.sign(
+              payload,
+              process.env.SECRET,
+              { algorithm: "HS256", expiresIn: "24hr"}
+            )
+
+            res.json({ token: token })
+          })
+          .catch((err) => {
+            res.json(err.message)
+          })
+        }
+      })
+      .catch((err) => {
+        res.json(err.message)
+      })
+});
+
+router.post("/login", function (req, res, next) {
+  //1. Make sure fields are filled out
+  if (!req.body.username || !req.body.password) {
+    return res.json({ message: "Please fill out all fields" });
+  }
+
+  //2. Check username
+  User.findOne({username: req.body.username})
+    .then((foundUser) => {
+      //2.1 Make sure user exists
+      if(!foundUser) {
+        return res.json({message: "Username or password incorrect"})
+      }
+
+      //2.2 Make sure password match
+      const doesMatch = bcrypt.compareSync(req.body.password, foundUser.password)
+
+      //3 Create a token
+      if(doesMatch) {
+        //3.1 Create the payload
+        const payload = {_id: foundUser._id}
+
+        //3.2 Create the token
+
+        const token = jwt.sign(
+          payload,
+          process.env.SECRET,
+          { algorithm: "HS256", expiresIn: "24hr"}
+        )
+
+        res.json({ token: token })
+      } else {
+        return res.json({message: "Username or password incorrect"})
+      }
+    })
+}); 
+
+// router.get("/login-test", isLoggedIn, (req, res) => {
+//   console.log("User", req.user)
+//   res.json({message: "You are logged in"})
+// })
+
+router.get("/update", isLoggedIn, (req, res) => {
+  User.findById(req.user._id)
+  .then((foundUser) => {
+    console.log("FOUND USER SUCCCESSFULL", foundUser)
+    foundUser.username,
+    foundUser.email,
+    foundUser.firstName,
+    foundUser.lastName,
+    foundUser.dateOfBirth,
+    foundUser.city,
+    foundUser.state
+  })
+  .catch((err) => {
+    res.json(err.message)
+  })
+})
+
+router.post("/update", isLoggedIn, (req, res) => {
+  User.findByIdAndUpdate(req.user._id, {
+    username: req.body.username,
+    email: req.body.email,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    dateOfBirth: req.body.dateOfBirth,
+    city: req.body.city,
+    state: req.body.state,
+  })
+  .then((updatedUser) => {
+    console.log("UPDATE", updatedUser)
+    res.json({message: "Profile was successfully updated."})
+  })
+  .catch((err) => {
+    res.json(err.message)
+  })
+})
+
+router.get("/delete", (req, res) => {
+  User.findByIdAndDelete(req.user._id)
+  .then(() => {
+    console.log("USER DELETED")
+    res.json({message: "User was successfully deleted."})
+  })
+  .catch((err) => {
+    res.json(err.message)
+  })
+})
+
+
 
 module.exports = router;
