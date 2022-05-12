@@ -28,8 +28,12 @@ const companySchema = new Schema (
             type: String,
             required: true,
         },
+        zip: {
+            type: Number,
+            required: true,
+        },
         phone: {
-            type: String,
+            type: Number,
         },
         email: {
             type: String,

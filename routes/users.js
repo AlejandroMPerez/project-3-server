@@ -39,11 +39,12 @@ router.post("/signup", function (req, res, next) {
             dateOfBirth: req.body.dateOfBirth,
             city: req.body.city,
             state: req.body.state,
+            isAdmin: false,
           })
           .then((createdUser) => {
             //5. Create the JSON Web Token (JWT)
             //5.1 Create the payload
-            const payload = {_id: createdUser._id}
+            const payload = {_id: createdUser._id, isAdmin: createdUser.isAdmin}
 
             //5.2 Create the token
             const token = jwt.sign(
@@ -84,7 +85,7 @@ router.post("/login", function (req, res, next) {
       //3 Create a token
       if(doesMatch) {
         //3.1 Create the payload
-        const payload = {_id: foundUser._id}
+        const payload = {_id: foundUser._id, isAdmin: foundUser.isAdmin}
 
         //3.2 Create the token
 
@@ -109,14 +110,8 @@ router.post("/login", function (req, res, next) {
 router.get("/update", isLoggedIn, (req, res) => {
   User.findById(req.user._id)
   .then((foundUser) => {
-    console.log("FOUND USER SUCCCESSFULL", foundUser)
-    foundUser.username,
-    foundUser.email,
-    foundUser.firstName,
-    foundUser.lastName,
-    foundUser.dateOfBirth,
-    foundUser.city,
-    foundUser.state
+    //console.log("FOUND USER SUCCCESSFULL", foundUser)
+    res.json(foundUser)
   })
   .catch((err) => {
     res.json(err.message)
@@ -134,8 +129,8 @@ router.post("/update", isLoggedIn, (req, res) => {
     state: req.body.state,
   })
   .then((updatedUser) => {
-    console.log("UPDATE", updatedUser)
-    res.json({message: "Profile was successfully updated."})
+    //console.log("UPDATE", updatedUser)
+    res.json(updatedUser, {message: "Profile was successfully updated."})
   })
   .catch((err) => {
     res.json(err.message)
@@ -145,7 +140,7 @@ router.post("/update", isLoggedIn, (req, res) => {
 router.get("/delete", (req, res) => {
   User.findByIdAndDelete(req.user._id)
   .then(() => {
-    console.log("USER DELETED")
+    //console.log("USER DELETED")
     res.json({message: "User was successfully deleted."})
   })
   .catch((err) => {

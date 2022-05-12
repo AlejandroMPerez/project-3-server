@@ -32,6 +32,9 @@ const userSchema = new Schema (
         state: {
             type: String,
         },
+        isAdmin: {
+            type: Boolean
+        }
     },
     {
         timeseries: true,
