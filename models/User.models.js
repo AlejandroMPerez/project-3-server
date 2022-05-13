@@ -13,15 +13,15 @@ const userSchema = new Schema (
         },
         email: {
             type: String,
-            required: true,
+            // required: true,
         },
         firstName: {
             type: String,
-            required: true,
+            // required: true,
         },
         lastName: {
             type: String,
-            required: true,
+            // required: true,
         },
         dateOfBirth: {
             type: String,

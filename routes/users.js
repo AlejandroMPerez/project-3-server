@@ -14,15 +14,16 @@ router.get("/", function (req, res, next) {
 
 router.post("/signup", function (req, res, next) {
   //1. Make sure fields are filled out
-  if (!req.body.username || !req.body.password || !req.body.email || !req.body.firstName || !req.body.lastName)  {
-    return res.json({ message: "Please fill out all fields" });
+  if (!req.body.username || !req.body.password)  {
+    // || !req.body.email || !req.body.firstName || !req.body.lastName
+    return res.status(400).json({ message: "Please fill out all fields" });
   }
 
   //2. Make sure username isn't taken
     User.findOne({username: req.body.username})
       .then((foundUser) => {
         if (foundUser) {
-          return res.json({message: "Username is taken"})
+          return res.status(400).json({message: "Username is taken"})
         } else {
           //3 Hash the password
           //3.1 Generate the salt
@@ -68,7 +69,7 @@ router.post("/signup", function (req, res, next) {
 router.post("/login", function (req, res, next) {
   //1. Make sure fields are filled out
   if (!req.body.username || !req.body.password) {
-    return res.json({ message: "Please fill out all fields" });
+    return res.status(400).json({ message: "Please fill out all fields" });
   }
 
   //2. Check username
@@ -76,7 +77,7 @@ router.post("/login", function (req, res, next) {
     .then((foundUser) => {
       //2.1 Make sure user exists
       if(!foundUser) {
-        return res.json({message: "Username or password incorrect"})
+        return res.status(400).json({message: "Username or password incorrect"})
       }
 
       //2.2 Make sure password match
@@ -97,15 +98,15 @@ router.post("/login", function (req, res, next) {
 
         res.json({ token: token })
       } else {
-        return res.json({message: "Username or password incorrect"})
+        return res.status(400).json({message: "Username or password incorrect"})
       }
     })
 }); 
 
-// router.get("/login-test", isLoggedIn, (req, res) => {
-//   console.log("User", req.user)
-//   res.json({message: "You are logged in"})
-// })
+router.get("/login-test", isLoggedIn, (req, res) => {
+  console.log("User", req.user)
+  res.json({message: "You are logged in"})
+})
 
 router.get("/update", isLoggedIn, (req, res) => {
   User.findById(req.user._id)
