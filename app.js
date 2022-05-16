@@ -46,9 +46,7 @@ app.use(function(err, req, res, next) {
 });
 
 mongoose
-  .connect(
-    process.env.MONGODB_URI || "mongodb://localhost/project-3-server"
-  )
+  .connect( process.env.NODE_ENV === "production" ? process.env.MONGODB_URI : "mongodb://localhost/project-3-server-local" )
   .then((x) =>
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
   )

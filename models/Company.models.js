@@ -10,9 +10,6 @@ const companySchema = new Schema (
             required: true,
             unique: true
         },
-        owner: {
-            type: String,
-        },
         about: {
             type: String,
         },
