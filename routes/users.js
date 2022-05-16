@@ -14,9 +14,8 @@ router.get("/", function (req, res, next) {
 
 router.post("/signup", function (req, res, next) {
   //1. Make sure fields are filled out
-  if (!req.body.username || !req.body.password)  {
-    // || !req.body.email || !req.body.firstName || !req.body.lastName
-    return res.status(400).json({ message: "Please fill out all fields" });
+  if (!req.body.username || !req.body.password || !req.body.email || !req.body.firstName || !req.body.lastName)  {
+    return res.json({ message: "Please fill out all fields" });
   }
 
   //2. Make sure username isn't taken
@@ -104,15 +103,14 @@ router.post("/login", function (req, res, next) {
 }); 
 
 router.get("/login-test", isLoggedIn, (req, res) => {
-  console.log("User", req.user)
+  //console.log("User", req.user)
   res.json({message: "You are logged in"})
 })
 
 router.get("/update", isLoggedIn, (req, res) => {
   User.findById(req.user._id)
-  .then((foundUser) => {
-    //console.log("FOUND USER SUCCCESSFULL", foundUser)
-    res.json(foundUser)
+  .then((currentUser) => {
+    res.json({currentUser: currentUser})
   })
   .catch((err) => {
     res.json(err.message)
@@ -129,9 +127,9 @@ router.post("/update", isLoggedIn, (req, res) => {
     city: req.body.city,
     state: req.body.state,
   })
-  .then((updatedUser) => {
+  .then(() => {
     //console.log("UPDATE", updatedUser)
-    res.json(updatedUser, {message: "Profile was successfully updated."})
+    res.status({message: "Profile was successfully updated."})
   })
   .catch((err) => {
     res.json(err.message)

@@ -1,7 +1,8 @@
 var express = require("express");
 var router = express.Router();
 const Company = require("../models/Company.models");
-const isLoggedIn = require("../middleware/isLoggedIn")
+const isLoggedIn = require("../middleware/isLoggedIn");
+const { cloudinary } = require("../config/cloudinary");
 
 
 //Create Companies
