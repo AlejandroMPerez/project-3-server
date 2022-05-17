@@ -102,14 +102,16 @@ router.post("/login", function (req, res, next) {
     })
 }); 
 
-router.get("/login-test", isLoggedIn, (req, res) => {
-  //console.log("User", req.user)
-  res.json({message: "You are logged in"})
-})
+// router.get("/login-test", isLoggedIn, (req, res) => {
+//   //console.log("User", req.user)
+//   res.json({message: "You are logged in"})
+// })
 
 router.get("/update", isLoggedIn, (req, res) => {
   User.findById(req.user._id)
+  console.log("REQ.USER.ID", req.user)
   .then((currentUser) => {
+    console.log("CURRENT USER", currentUser)
     res.json({currentUser: currentUser})
   })
   .catch((err) => {

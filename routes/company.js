@@ -5,15 +5,13 @@ const isLoggedIn = require("../middleware/isLoggedIn");
 const fileUploader = require ("../middleware/cloudinary.config.js");
 
 //Create Companies
-router.post("/create", isLoggedIn, fileUploader.single("imageUrl"), (req, res) => {
+router.post("/create", isLoggedIn, (req, res) => {
 
-    res.json(req.file)
-    
   if (!req.body.name || !req.body.address || !req.body.city || !req.body.state) {
     return res.status(400).json({ message: "Name, address, city, and state are required fields."});
   } else {
         Company.create({
-        image: req.file.path,
+        image: req.body.image,
         name: req.body.name,
         about: req.body.about,
         address: req.body.address,
@@ -112,5 +110,10 @@ router.post("/all-companies/:id/edit/delete", isLoggedIn, (req, res, next) => {
       res.json(err.message);
     });
 });
+
+//Cloudinary route.
+router.post("/image-upload", isLoggedIn, fileUploader.single("imageUrl"), (req, res) => {
+    res.json(req.file.path);
+})
 
 module.exports = router;
