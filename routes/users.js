@@ -108,32 +108,46 @@ router.post("/login", function (req, res, next) {
 // })
 
 router.get("/update", isLoggedIn, (req, res) => {
+  
   User.findById(req.user._id)
   .then((currentUser) => {
     res.json(currentUser)
-    // res.json({user: req.user})
-// console.log("REQ.USER.ID", req.user)
-// console.log("CURRENT USER", currentUser)
   })
   .catch((err) => {
     res.json(err.message)
   })
-  
 })
 
 router.post("/update", isLoggedIn, (req, res) => {
-  User.findByIdAndUpdate(req.user._id, {
-    username: req.body.username,
-    email: req.body.email,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    dateOfBirth: req.body.dateOfBirth,
-    city: req.body.city,
-    state: req.body.state,
-  })
-  .then(() => {
-    //console.log("UPDATE", updatedUser)
-    res.status({message: "Profile was successfully updated."})
+  const removeFalsy = (obj) => {
+    let newObj = {};
+    Object.keys(obj).forEach((prop) => {
+      if (obj[prop]) {
+        newObj[prop] = obj[prop];
+      }
+    });
+    return newObj;
+  };
+
+  let updateInfo = removeFalsy(req.body);
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { ...updateInfo },
+    { new: true }
+  )
+  // User.findByIdAndUpdate(req.user._id, {
+  //   username: req.body.username,
+  //   email: req.body.email,
+  //   firstName: req.body.firstName,
+  //   lastName: req.body.lastName,
+  //   dateOfBirth: req.body.dateOfBirth,
+  //   city: req.body.city,
+  //   state: req.body.state,
+  // })
+  .then((updatedUser) => {
+    res.json(updatedUser)
+    //res.status({message: "Profile was successfully updated."})
   })
   .catch((err) => {
     res.json(err.message)
