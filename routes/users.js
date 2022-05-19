@@ -53,7 +53,7 @@ router.post("/signup", function (req, res, next) {
               { algorithm: "HS256", expiresIn: "24hr"}
             )
 
-            res.json({ token: token })
+            res.json({ token: token, id: createdUser._id })
           })
           .catch((err) => {
             res.json(err.message)
@@ -95,7 +95,7 @@ router.post("/login", function (req, res, next) {
           { algorithm: "HS256", expiresIn: "24hr"}
         )
 
-        res.json({ token: token })
+        res.json({ token: token, id: foundUser._id })
       } else {
         return res.status(400).json({message: "Username or password incorrect"})
       }
@@ -109,14 +109,16 @@ router.post("/login", function (req, res, next) {
 
 router.get("/update", isLoggedIn, (req, res) => {
   User.findById(req.user._id)
-  console.log("REQ.USER.ID", req.user)
   .then((currentUser) => {
-    console.log("CURRENT USER", currentUser)
-    res.json({currentUser: currentUser})
+    res.json(currentUser)
+    // res.json({user: req.user})
+// console.log("REQ.USER.ID", req.user)
+// console.log("CURRENT USER", currentUser)
   })
   .catch((err) => {
     res.json(err.message)
   })
+  
 })
 
 router.post("/update", isLoggedIn, (req, res) => {
@@ -138,10 +140,10 @@ router.post("/update", isLoggedIn, (req, res) => {
   })
 })
 
-router.get("/delete", (req, res) => {
+router.post("/delete", isLoggedIn, (req, res) => {
   User.findByIdAndDelete(req.user._id)
   .then(() => {
-    //console.log("USER DELETED")
+    console.log("USER DELETED")
     res.json({message: "User was successfully deleted."})
   })
   .catch((err) => {

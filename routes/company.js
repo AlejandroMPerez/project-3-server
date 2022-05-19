@@ -26,7 +26,7 @@ router.post("/create", isLoggedIn, (req, res) => {
 
       .then((createdCompany) => {
         //console.log("COMPANY RESULTS", createdCompany)
-        res.json({ createdCompany: createdCompany });
+        res.json(createdCompany);
       })
       .catch((err) => {
         res.json(err.message);
@@ -37,9 +37,10 @@ router.post("/create", isLoggedIn, (req, res) => {
 //View Companies
 router.get("/all-companies", isLoggedIn, (req, res) => {
   Company.find()
+    .populate("creatorId")
     .then((foundCompanies) => {
-      //console.log("FOUND COMPANIES", foundCompanies)
-      res.json({ foundCompanies: foundCompanies });
+      // console.log("FOUND COMPANIES", foundCompanies)
+      res.json(foundCompanies);
     })
     .catch((err) => {
       res.json(err.message);
@@ -50,8 +51,8 @@ router.get("/all-companies", isLoggedIn, (req, res) => {
 router.get("/all-companies/:id", isLoggedIn, (req, res) => {
   Company.findById(req.params.id)
     .then((foundCompany) => {
-      //console.log("FOUND COMPANY", foundCompany)
-      res.json({ foundCompany: foundCompany });
+      console.log("FOUND COMPANY", foundCompany)
+      res.json(foundCompany);
     })
     .catch((err) => {
       res.json(err.message);
@@ -68,7 +69,7 @@ router.get("/all-companies/:id/edit", isLoggedIn, (req, res, next) => {
         editCompany.creatorId.toHexString() === req.user._id ||
         req.user.isAdmin === true
       ) {
-        res.json({ editCompany: editCompany });
+        res.json(editCompany);
       } else {
         res.json("You are not authorized to edit this page.");
       }
