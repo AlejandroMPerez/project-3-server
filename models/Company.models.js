@@ -4,6 +4,7 @@ const companySchema = new Schema (
     {
         image: {
             type: String,
+            default: "https://petalumapeople.org/wp-content/uploads/depositphotos_55428789-stock-photo-we-are-hiring-handwritten-with.jpg"
         },
         name: {
             type: String,
