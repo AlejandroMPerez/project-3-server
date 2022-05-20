@@ -29,7 +29,7 @@ router.post("/create", isLoggedIn, (req, res) => {
     let updateInfo = removeFalsy(req.body);
 
     Company.create({
-      ...updateInfo
+      ...updateInfo,
       // image: req.body.image,
       // name: req.body.name,
       // about: req.body.about,
@@ -40,7 +40,7 @@ router.post("/create", isLoggedIn, (req, res) => {
       // phone: req.body.phone,
       // email: req.body.email,
       // url: req.body.url,
-      // creatorId: req.user._id,
+      creatorId: req.user._id,
     })
 
       .then((createdCompany) => {
