@@ -102,11 +102,6 @@ router.post("/login", function (req, res, next) {
     })
 }); 
 
-// router.get("/login-test", isLoggedIn, (req, res) => {
-//   //console.log("User", req.user)
-//   res.json({message: "You are logged in"})
-// })
-
 router.get("/update", isLoggedIn, (req, res) => {
   
   User.findById(req.user._id)
@@ -136,7 +131,6 @@ router.post("/update", isLoggedIn, (req, res) => {
     { ...updateInfo },
     { new: true }
   )
-  // User.findByIdAndUpdate(req.user._id, {
   //   username: req.body.username,
   //   email: req.body.email,
   //   firstName: req.body.firstName,
@@ -144,10 +138,8 @@ router.post("/update", isLoggedIn, (req, res) => {
   //   dateOfBirth: req.body.dateOfBirth,
   //   city: req.body.city,
   //   state: req.body.state,
-  // })
   .then((updatedUser) => {
     res.json(updatedUser)
-    //res.status({message: "Profile was successfully updated."})
   })
   .catch((err) => {
     res.json(err.message)
@@ -157,7 +149,6 @@ router.post("/update", isLoggedIn, (req, res) => {
 router.post("/delete", isLoggedIn, (req, res) => {
   User.findByIdAndDelete(req.user._id)
   .then(() => {
-    console.log("USER DELETED")
     res.json({message: "User was successfully deleted."})
   })
   .catch((err) => {

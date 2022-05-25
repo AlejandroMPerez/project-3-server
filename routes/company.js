@@ -58,7 +58,6 @@ router.get("/all-companies", isLoggedIn, (req, res) => {
   Company.find()
     .populate("creatorId")
     .then((foundCompanies) => {
-      // console.log("FOUND COMPANIES", foundCompanies)
       res.json(foundCompanies);
     })
     .catch((err) => {
@@ -82,8 +81,6 @@ router.get("/all-companies/:id", isLoggedIn, (req, res) => {
 router.get("/all-companies/:id/edit", isLoggedIn, (req, res, next) => {
   Company.findById(req.params.id)
     .then((editCompany) => {
-      // console.log(editCompany.creatorId.toHexString())
-      // console.log(req.user._id)
       if (
         editCompany.creatorId.toHexString() === req.user._id ||
         req.user.isAdmin === true
