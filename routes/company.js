@@ -44,7 +44,6 @@ router.post("/create", isLoggedIn, (req, res) => {
     })
 
       .then((createdCompany) => {
-        //console.log("COMPANY RESULTS", createdCompany)
         res.json(createdCompany);
       })
       .catch((err) => {
