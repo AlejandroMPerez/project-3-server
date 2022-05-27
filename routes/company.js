@@ -30,6 +30,9 @@ router.post("/create", isLoggedIn, (req, res) => {
 
     Company.create({
       ...updateInfo,
+
+      //NOTE: Remove this commented out code
+
       // image: req.body.image,
       // name: req.body.name,
       // about: req.body.about,
@@ -47,6 +50,7 @@ router.post("/create", isLoggedIn, (req, res) => {
         res.json(createdCompany);
       })
       .catch((err) => {
+        //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
         res.json(err.message);
       });
   }
@@ -60,6 +64,7 @@ router.get("/all-companies", isLoggedIn, (req, res) => {
       res.json(foundCompanies);
     })
     .catch((err) => {
+      //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
       res.json(err.message);
     });
 });
@@ -68,10 +73,12 @@ router.get("/all-companies", isLoggedIn, (req, res) => {
 router.get("/all-companies/:id", isLoggedIn, (req, res) => {
   Company.findById(req.params.id)
     .then((foundCompany) => {
+      //NOTE: Remove console.log()
       console.log("FOUND COMPANY", foundCompany);
       res.json(foundCompany);
     })
     .catch((err) => {
+      //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
       res.json(err.message);
     });
 });
@@ -82,10 +89,12 @@ router.get("/all-companies/:id/edit", isLoggedIn, (req, res, next) => {
     .then((editCompany) => {
       if (
         editCompany.creatorId.toHexString() === req.user._id ||
+        //NOTE req.user.isAdmin is truthy, you don't need to specify the    === true  part
         req.user.isAdmin === true
       ) {
         res.json(editCompany);
       } else {
+        //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
         res.json("You are not authorized to edit this page.");
       }
     })
@@ -96,6 +105,7 @@ router.get("/all-companies/:id/edit", isLoggedIn, (req, res, next) => {
 
 //Post Update Companies route
 router.post("/all-companies/:id/edit", isLoggedIn, (req, res, next) => {
+  //NOTE: Use the function which strips out falsy keys, then use the spread operator here, like you did on lines 19-32
   Company.findByIdAndUpdate(req.params.id, {
     image: req.body.image,
     name: req.body.name,
@@ -113,6 +123,7 @@ router.post("/all-companies/:id/edit", isLoggedIn, (req, res, next) => {
       res.json({ message: "Company was successfully updated" });
     })
     .catch((err) => {
+      //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
       res.json(err.message);
     });
 });
@@ -123,6 +134,7 @@ router.post("/all-companies/:id/edit/delete", isLoggedIn, (req, res, next) => {
       res.json({ message: "Company was successfully deleted" });
     })
     .catch((err) => {
+      //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
       res.json(err.message);
     });
 });

@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 
+//NOTE: Remove commented out code
+
 const isLoggedIn = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token || token === "null") {
@@ -14,6 +16,7 @@ const isLoggedIn = async (req, res, next) => {
     req.user = tokenInfo;
     next();
   } catch (error) {
+    //NOTE: add status(400) when sending something wrong. This prevents side effects on the React client
     return res.json(error);
   }
 };
