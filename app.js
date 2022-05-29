@@ -30,8 +30,6 @@ app.use(
   })
 );
 
-//NOTE: you can remove indexRouter
-app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/companies", companyRouter);
 

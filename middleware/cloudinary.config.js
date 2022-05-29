@@ -8,13 +8,11 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
-//NOTE: Remove commented out code
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     allowed_formats: ["jpg", "png"],
-    folder: "project-3", // The name of the folder in cloudinary
-    // resource_type: "raw", // => this is in case you want to upload other types of files, not just images
+    folder: "project-3",
   },
 });
 
